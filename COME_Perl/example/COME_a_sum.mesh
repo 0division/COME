@@ -1,0 +1,4 @@
+/#k1|<<=|a[*1*]>::<<+|a_sum> += <<0|a[*1*]> - <<-|a[*1*]>#\
+<#a[0]:=3;a[1]:=9;a[2]:=6;_tt+#>
+<#a[1]:=3;a[3]:=10;_tt+#>
+<#_html_dump:=example\come_a_sum.html;_out0:=yarn;_out0:=code;_out0:=dumpall#>
