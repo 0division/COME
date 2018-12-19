@@ -22,9 +22,9 @@
 <h4>Knit</h4>
 <table bgcolor='#222222'><tr><td><code>k1</code></td><td><code>/#k1|&lt;&lt;=|a[*1*]>::<br>  &lt;&lt;+|a_sum[&lt;&lt;0|a[*1*]cy>]> += &lt;&lt;0|a[*1*]> - &lt;&lt;-|a[*1*]>;<br>  &lt;&lt;+|a_sum_eur> += &lt;&lt;0|a[*1*]> * &lt;&lt;0|cy[&lt;&lt;0|a[*1*]cy>]> - &lt;&lt;-|a[*1*]> * &lt;&lt;-|cy[&lt;&lt;0|a[*1*]cy>]></code></td><td><code>
 sub CKnitCode_k1($tt, $a1) {<br>
- if (GetYarn($tt, "a[$a1]") != GetYarn($tt+-1, "a[$a1]")) {<br>
+ if (( GetYarn_Exact_TT($tt, "a[$a1]"))) {<br>
     AsgmYarn($tt+1, "a_sum[".GetYarn($tt, "a[$a1]cy")."]", "+=", " ".GetYarn($tt, "a[$a1]")." - ".GetYarn($tt-1, "a[$a1]")."");<br>
     AsgmYarn($tt+1, "a_sum_eur", "+=", " ".GetYarn($tt, "a[$a1]")." * ".GetYarn($tt, "cy[".GetYarn($tt, "a[$a1]cy")."]")." - ".GetYarn($tt-1, "a[$a1]")." * ".GetYarn($tt-1, "cy[".GetYarn($tt, "a[$a1]cy")."]")."");<br>
  }<br>
 }<br></code></td></tr></table><br>
-<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.16 18:25:27 / example\come_a_sum2.html </small></body></html>
+<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.19 21:31:47 / example\come_a_sum2.html </small></body></html>

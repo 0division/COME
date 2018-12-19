@@ -15,8 +15,8 @@
 <h4>Knit</h4>
 <table bgcolor='#222222'><tr><td><code>k1</code></td><td><code>/#k1|&lt;&lt;=|a[*1*]>::<br>&lt;&lt;+|a_sum> += &lt;&lt;0|a[*1*]> - &lt;&lt;-|a[*1*]></code></td><td><code>
 sub CKnitCode_k1($tt, $a1) {<br>
- if (GetYarn($tt, "a[$a1]") != GetYarn($tt+-1, "a[$a1]")) {<br>
+ if (( GetYarn_Exact_TT($tt, "a[$a1]"))) {<br>
   AsgmYarn($tt+1, "a_sum", "+=", " ".GetYarn($tt, "a[$a1]")." - ".GetYarn($tt-1, "a[$a1]")."");<br>
  }<br>
 }<br></code></td></tr></table><br>
-<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.16 18:25:35 / example\come_a_sum.html </small></body></html>
+<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.19 21:31:31 / example\come_a_sum.html </small></body></html>

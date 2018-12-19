@@ -4,7 +4,7 @@ use feature qw(signatures);
 no warnings qw(experimental::signatures);
 use Data::Dumper;
 use Data::Dumper;
-use lib 'C:\Users\Lydia\Desktop\Daniel\COME\COME_Perl';
+use lib '.';
 use come_plib::parser;
 use come_plib::base;
 use come_plib::io;
