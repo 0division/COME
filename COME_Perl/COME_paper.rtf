@@ -1,0 +1,220 @@
+{\rtf1\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset0 Consolas;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.17134}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\qc\i\f0\fs96\lang7 Condition Mesh\i0\fs22\par
+
+\pard\sa200\sl276\slmult1 Daniel M\'fcller / 2018-12 / come_paper.rtf in githup/0division/come\par
+\par
+
+\pard\sl276\slmult1\b Keynotes\par
+
+\pard\sa200\sl276\slmult1\b0 Condition Mesh (COME) is a computing system,  where programs are almost if-then-statements. All statements are executed simultaneously and continuously. The system can be at different states in the logical time line hat the same point of time. Keen about it? Just read it...\par
+
+\pard\sl276\slmult1\b Teaser\par
+
+\pard\sa200\sl276\slmult1\b0 Let's start with a very short program continuously summing the values of an array a[...] into the scalar sum by defining the following knit k1:\par
+
+\pard\sl240\slmult1\f1\fs20 /#k1|<<s,a[*1*]>>:\par
+  <<+,sum>> += <<0,a[*1*]>> - <<-,a[*1*]>>\par
+
+\pard\sa200\sl276\slmult1 #\\\par
+\f0\fs22 , where any set value in the array a (<<s,ya[*1*]>>) change the next  a_sum (<<+,sum>>) by adding to the previous a_sum (+=) the actual value of the a element (<<0,a[*1*]>>) and subtracting the previous a element in time (<<-,a[*1*]>>).\par
+At next you can start assigning values to the array:\par
+
+\pard\sl240\slmult1\f1\fs20 <#a[0] := 3;  a[1] := 2#>\par
+
+\pard\sa200\sl240\slmult1 <#a[0] := 10; a[2] := 5#>\par
+
+\pard\sa200\sl276\slmult1\f0\fs22 , which leads to the following a_sum in time:\par
+
+\pard\sl240\slmult1\f1\fs20  sum = 5\par
+
+\pard\sa200\sl240\slmult1  sum = 17\par
+
+\pard\sa200\sl276\slmult1\f0\fs22 All computation based on single array elements are done in parallel and in this case is no locking issue, because of the incremental addition by using +=.\par
+
+\pard\sl276\slmult1\b Introduction\par
+
+\pard\sa200\sl276\slmult1\b0 Programming languages getting more and more extensive and are -in most cases- object oriented and imperative. The nature has invented neural networks with only neurons and synapses to be the best, which are not imperial, but fuzzy or to say i not discrete.\par
+
+\pard\sl276\slmult1\b Motivation\par
+
+\pard\sa200\sl276\slmult1\b0 It seems still worthwhile to find a way to define concrete computation algorithm by using the smallest possible definition units to breakdown the complexity of an algorithm to its smallest and most handy units. Handy to be defined and handy to be interpreted by the computer. The smallest possible unit for computer and human is an if-statements and simple data types. A network if-statements.\par
+
+\pard\sl276\slmult1\b Idea\par
+
+\pard\sa200\sl276\slmult1\b0 The idea is to define a system executing a condition mesh (COME), which is discrete iconditions (as synapses) and setting variable values (as neurons). To be defined.\par
+a assignment triggers neurons and a condition could be seen as \par
+And that\rquote s It.\par
+
+\pard\sl276\slmult1\b COME - Syntax\par
+
+\pard\sa200\sl276\slmult1\b0 A condition mesh is defined by using knitting patterns <kp> of the following syntax\par
+
+\pard\sl276\slmult1\f1\fs20 <Kp>:        /#<Knitname>#|#\par
+             [<Condition>:]*\par
+             #>#\par
+[<Assignment>;]+\par
+
+\pard\sa200\sl276\slmult1 #\\\par
+\f0\fs22 , being almost identical to if-statement, but a knitting pattern can be defined for many variables and all are evaluated every time tick.  They seem to be evaluated all the time, but the evaluation is only triggered, if one of the influencing variables could trigger the condition.\par
+Conditions are common -boolean interpreted- Expressions by the host language:\par
+\f1\fs20     <Condition>:        <expression> (boolean interpreted)\par
+\f0\fs22 Variables has common name, but can contain dots and square brackets with an evaluation:\par
+\f1\fs20     <Variable>:        [a-z][\\w*|.|[[<Expression>|*]]]*\par
+\f0\fs22 The dots and square brackets are parts of the variable names and might let them look like  arrays, structures, list or even objects. But: They are not. Variable are all one the same level.\par
+The square brackets allows only to use an expression and the very special is *\\d*, which trigger to replicate the stitch for each variable found using *\\d* as a wildcard within the variable name. \par
+The common <assignment operant>s  can be used (:=, +=,-=,*=,/=, \'85). Use the simple assignment := only if others are impossible to use and if it has been used more than once to assign a value to a specific variable, the risk is high that this variable set with a different value at the same time tick. Those variables should only be used as signals (remember this later on...).\par
+Assigning a variable is usually \par
+\f1\fs20     <assignment>:        <<+|[<variable> ]> <op> <expression>\f0\fs22\par
+, which can change the values of a bunch of variables at once by given value of the expression. This is very useful with all non-simple assignments. The other style of assignment is\par
+\f1\fs20     <assignment>:        \{+[bad|out(_<outstream>)]\} [<variable> ]+ \par
+\f0\fs22 , where bad set the variable invalid and out trigger the output of the variable to the output stream on any change of the variable.\par
+The \{+\}-prefix is setting the variables content in the future. Initially it has the content copy from now (virtually).\par
+As an analogy to knitting, you have knitting pattern (if-then-program code), which define which yarn (variables) is knitted when (conditions), from the right sided expression to left sided variable of the assignments.\par
+The system can have many processes, which has different applications. There are:\par
+A foreman (e.g. control thread) read the knitting patterns  and delegate knittings to the knitters (e.g. worker thread), which wait for yarn (variables, which has the right value to trigger any condition of an knitting pattern).\par
+The storeman (memory manager) receive yarn changes and trigger the next knitting patterns. Depending on the implementation and configuration the yarn changes will be collected in a queue and knitting pattern will be executed in a bunch even their executing is placed in different time ticks.\par
+The mesh is knitting asynchronous in default and inform you (knitting tycoon) where critical synchronisation are necessary.\par
+Regarding variables: there are prefixes, which has to be used. This is one of the really specialty: how to access the variables in the mesh and control to trigger knitting pattern in the right dependencies.\par
+The previous \par
+
+\pard\sa200\sl276\slmult1\tx852\f1\fs20 <<+|y>\f0\fs22\tab Only applicable at assignments: value of the variable for next time tick\par
+\f1\fs20 <<0|y>  \f0\fs22 reading the value of the actual time tick\par
+\f1\fs20 <<-|y> \tab\f0\fs22 reading the variable value from the previous tick\par
+\f1\fs20 <<:|y>  \f0\fs22 returning true, if the value of the variable has been set in the actual time tick\par
+\f1\fs20 <<*|y>  \f0\fs22 returning true, if the value of the variable has been set in the actual time tick and has been empty before\par
+\f1\fs20 <<!|y> \f0\fs22\tab\par
+\f1\fs20 <<a|a> \f0\fs22\tab set an alias name (not a variable)\par
+\f1\fs20 <<o(|_outstream)>> \f0\fs22\tab variable will be outpiped into the outstream\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\b\fs96 OLD STUFF - zu ueberearbeiten\par
+
+\pard\sa200\sl276\slmult1\b0\fs22\par
+\par
+\par
+\par
+\par
+COME - system\par
+As \par
+\{\{COME(|_mesh)\}\} := ON\par
+\{\{COME(|_mesh)\}\} := OFF\par
+\{\{COME(|_mesh)\}\} := (n) STEP\par
+\par
+\par
+\par
+New stitches can be pipelined into the decision mesh all the time, but in most cases you want to pass just data using just assignments\par
+\par
+\par
+You might think, ough all condition are evaluated all the time. This is not true: the storeman will trigger a bunch of knits in a row regarding a changed variable, even they're spread over time.\par
+\par
+State\par
+Each variable is virtually stored in a hash table and\par
+\par
+Input/output\par
+\par
+Examples\par
+Example 1: sum bank account amount continuously\par
+You have bank accounts in different currencies and interest, money can be transferred. The amount has to be actualized if interest changes, money has been transferred or accounting is demanded. You want to have several always uptodate sums for each currency (sum_currency)  and in euro (sum_eur) and those for each country (sum_country[_currency]). and in to been:\par
+\par
+COME-code\par
+Code ist veraltet\par
+The initial COME-Code has three stitches\par
+actualize amount of bank accounts\par
+actualize foreign currency sums \par
+actualize euro sums\par
+\par
+/* 1. Stitch: actualize amount of bank accounts */\par
+\{alias=a:=account[*]\}\par
+\{set\}a.interest or \{set\}a.transfer or \{set\}a.accounting:\par
+  \{+\}a.date       := today \par
+  \{+\}a.amount     += \{-\}a.amount^(\{-\}a.interest * (a.date - \{-\}a.date)/355)\par
+  + a.transfer\par
+  \{bad\}a.transfer,a.accounting\par
+\par
+/* 2. Stitch: actualize foreign currency sums */\par
+\{set\}a.amount or \{set\}a.currency or \{set\}:\par
+  sum_currency[_a.currency] -= _a.amount\par
+  sum_currency[a.currency]  += a.amount\par
+  sum_currency_country[_a.country][_a.currency] -= _a.amount\par
+  sum_currency_country[a.country][a.currency]   += a.amount\par
+\{alias=a:=\}\par
+\par
+/* 3. Stitch: actualize euro sums */\par
+\{set\}sum_currency[\{alias=c\}*] or \{set\}currency_fx[c]:\par
+  sum_eur += sum_currency[c]*currency_fx[c] - \{-\}sum_currency[c]* \{-\}currency_fx[c]\par
+\{set\}sum_country_currency[\{alias=c\}*] or \{set\}currency_fx[c]:\par
+  sum_country_eur += sum_country_currency[c]*currency_fx[c] \par
+                     - \{-\}sum_country_currency[c]* \{-\}currency_fx[c]\par
+Input data\par
+Next we need basic informations in the Mesh, by setting the bank account (here format json):\par
+\{\par
+    "account": [\par
+    \{"key": "4332-2245-1123-1131", "currency": "EUR", "amount": "200.000" \}  \par
+    \{"key": "4332-9999-1323-1131", "currency": "USD", "amount": "250.000" \} \par
+    \{"key": "7777-9999-1323-1131", "currency": "CHF", "amount": "1.000" \} \par
+    ]\par
+\}\par
+And the Mesh get switched on using \{\{COME\}\} := ON, but no program will even exist on the graphic card at all!!! This is because none of the \{set\}variables even exist, because they had not been set since switching the system on. Which means that the condition mesh is empty. There are just the variables and the COME-stitches as templates in mind of the system.\par
+Account movements are pipelined with an csv input hub link containing the columns account[] (character) and transfer (integer) from the accounting system. The incoming data:\par
+"4332-2245-1123-1131", 300\par
+"4332-9999-1323-1131", -100\par
+...\par
+which leads to the following direct execution of the following COME-statements:\par
+account["4332-2245-1123-1131"].transfer := 300\par
+account["4332-9999-1323-1131"].transfer := -100\par
+...\par
+After a bunch of data the time start ticking for the Mesh, because the variable-signals \{set\}account[ACCOUNTNUMBER].transfer forces the creation of \ldblquote 1. Stitch\rdblquote -computing instructions for each occuring ACCOUNTNUMBER  and directly execute them on the first time tick. This will go on as long as data get piped into the programm. \ldblquote 1. Stitch\rdblquote  will trigger \ldblquote 2. Stitch\rdblquote  and this will trigger \ldblquote 2. Stitch\rdblquote .\par
+The result is, that only computation code to incoming data even exist and get executed. That can also be controlled differently.\par
+Other data, which is seldom changed is stream in using a COME input hub link: \par
+account["7777-9999-1323-1131"].interest := .3\par
+currency_fx["usd"] := 1.2\par
+Instantiating the Mesh Setup\par
+With the code above you have instantiate a Condition Mesh (COME) on a single computer with a state of the art graphic card and powerful network connection, hence you know huge amount of account transfer need to be managed.\par
+In this application the \{out\}-Statement is not used and the out hub is accessed by using ODBC to actualize an amount dashboard each second using the following SQL:\par
+    Select * from sum_currency_horizontal, sum_euro\par
+, where sum_currency_horizontal is a table representation of the array sum_currency with one row and a column for each currency and sum_euro has one row and one column with the name sum_euro as the table representation for a single value.\par
+For really reliable data the SQL can be submitted with an Mesh-Lock, which means in this case that the input stream get completely stopped and it has been waited until the Mesh is finished executing.\par
+Summary\par
+You might think: Here are only if-then statements purposed to be used, seriously? Yes! This goes in the same direction as Prolog? Right.\par
+\par
+The advantage is that the developer is forced to define small computation steps and fewer dependencies between each. This result in as little as possible computation overall. Or: The input is pushed in the condition/assignment network and trigger all necessary, but only those with maximum of parallelization.\par
+In comparison to e.g. spark/parque/scala, which is a modern and really way to -let\rquote s say- pulling fast out of a huge data blob, in DNN you push data into in and all outputs are actualized very fast. \par
+It is the other way: good in pushing new input data in all outputs and slow in new output definitions. And in comparison to a neural network: discrete in data types and the real difference in it definition at all.\par
+\par
+\par
+References\par
+{{\field{\*\fldinst{HYPERLINK https://artint.info/html/ArtInt_219.html }}{\fldrslt{https://artint.info/html/ArtInt_219.html\ul0\cf0}}}}\f0\fs22\par
+Yacc\par
+SPICE/PLECS\par
+Txt2re\par
+\par
+Glossary\par
+Gate / Signal / \par
+\par
+To be discuss\par
+\par
+}
+ 
