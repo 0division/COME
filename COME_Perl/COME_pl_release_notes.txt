@@ -1,0 +1,12 @@
+24.12.2018
+  COME_pl::parser::P2C - <<0| and <<-| should now work also nested in a condition and <<=| should now work in an assigment: NOT TESTED!!!
+  ALL - Adding comments
+
+NEXT:
+  a) Adding even more comments
+  b) write the help
+  c) output failures in the COME-code
+  d) write a test programm, which execute different meshes and check if the output is correct
+  e) move the main-loop in come_exe.pl into come_plib::base::COME_exe
+  f) support different multiple meshes
+  g) implement other time and asgm-modes

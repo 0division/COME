@@ -1,0 +1,95 @@
+/#\ COME-Condition Mesh v.01.20181224 | (c) 2018, Daniel Mueller | for help type <#_out0:=help#>
+ running in debug mode: NO DEBUG, time tick mode: EXPLICIT, assignment mode: IMMEDIATE, run-mode: BRUTEFORCE
+
+..................Name	*	tt=2	tt=1	tt=0
+                  a[0]	3			3
+                a[0]cy	EUR			EUR
+                  a[1]	15		15	10
+                a[1]cy	USD			USD
+                  a[2]	30		30	
+                a[2]cy	EUR		EUR	
+            a_sum[EUR]	33	33	3	
+            a_sum[USD]	15	15	10	
+             a_sum_eur	51	51	15	
+               cy[EUR]	1			1
+               cy[USD]	1.2			1.2
+
+$VAR1 = {
+     'pknit' => {
+            'k1' => {
+                 'cond' => ['<<=|a[*1*]>'],
+                 'code' => '/#k1|<<=|a[*1*]>:: <<+|a_sum[<<0|a[*1*]cy>]> += <<0|a[*1*]> - <<-|a[*1*]>; <<+|a_sum_eur> += <<0|a[*1*]> * <<0|cy[<<0|a[*1*]cy>]> - <<-|a[*1*]> * <<-|cy[<<0|a[*1*]cy>]>',
+                 'asgm' => [' <<+|a_sum[<<0|a[*1*]cy>]> += <<0|a[*1*]> - <<-|a[*1*]>',
+                       ' <<+|a_sum_eur> += <<0|a[*1*]> * <<0|cy[<<0|a[*1*]cy>]> - <<-|a[*1*]> * <<-|cy[<<0|a[*1*]cy>]>']
+                }},
+     'cknit' => {
+            'k1' => {
+                 'wild' => {
+                       '1' => ['a\\[([\\d|\\w]+)\\]cy',
+                           'a\\[([\\d|\\w]+)\\]']
+                      },
+                 'asgm' => [' AsgmYarn($tt+1, "a_sum[".GetYarn($tt, "a[*1*]cy")."]", "+=", " ".GetYarn($tt, "a[*1*]")." - ".GetYarn($tt-1, "a[*1*]")."")',
+                       ' AsgmYarn($tt+1, "a_sum_eur", "+=", " ".GetYarn($tt, "a[*1*]")." * ".GetYarn($tt, "cy[".GetYarn($tt, "a[*1*]cy")."]")." - ".GetYarn($tt-1, "a[*1*]")." * ".GetYarn($tt-1, "cy[".GetYarn($tt, "a[*1*]cy")."]")."")'],
+                 'code' => '
+sub CKnitCode_k1($tt, $a1) {
+ if (eval("".(GetYarn_Exact_TT($tt, "a[$a1]"))."")) {
+  AsgmYarn($tt+1, "a_sum[".GetYarn($tt, "a[$a1]cy")."]", "+=", " ".GetYarn($tt, "a[$a1]")." - ".GetYarn($tt-1, "a[$a1]")."");
+  AsgmYarn($tt+1, "a_sum_eur", "+=", " ".GetYarn($tt, "a[$a1]")." * ".GetYarn($tt, "cy[".GetYarn($tt, "a[$a1]cy")."]")." - ".GetYarn($tt-1, "a[$a1]")." * ".GetYarn($tt-1, "cy[".GetYarn($tt, "a[$a1]cy")."]")."");}
+}',
+                 'cond' => ['eval("".(GetYarn_Exact_TT($tt, "a[*1*]"))."")']
+                }},
+     'yarn*' => {
+            'a_sum_eur' => 51,
+            'a[1]' => 15,
+            'a[0]cy' => 'EUR',
+            'a_sum[EUR]' => 33,
+            'a[2]cy' => 'EUR',
+            'a[1]cy' => 'USD',
+            'a[0]' => 3,
+            'cy[USD]' => '1.2',
+            'cy[EUR]' => 1,
+            'a_sum[USD]' => 15,
+            'a[2]' => 30},
+     'code' => ['	/#k1|<<=|a[*1*]>:: <<+|a_sum[<<0|a[*1*]cy>]> += <<0|a[*1*]> - <<-|a[*1*]>; <<+|a_sum_eur> += <<0|a[*1*]> * <<0|cy[<<0|a[*1*]cy>]> - <<-|a[*1*]> * <<-|cy[<<0|a[*1*]cy>]>#\\
+	<#cy[EUR]:=1;cy[USD]:=1.2#>
+	<#a[0]cy:=\'EUR\';a[0]:=3;a[1]cy:=\'USD\';a[1]:=10;_tt+#>
+',
+           '	<#a[1]:=15;a[2]cy:=\'EUR\';a[2]:=30;_tt+#>
+',
+           '	<#_html_dump:=example\\come_a_sum2.html;_out0:=yarn;_out0:=dump_all#>
+'],
+     'Cknit2yarn' => {
+              'k1' => {
+                   'a[*1*]cy' => '<a,0><a,0><a,0>',
+                   'a[*1*]' => '<c,=><a,0><a,-><a,0><a,->',
+                   'a_sum_eur' => '<a,+>'}
+             },
+     'tt' => 2,
+     'kfg' => {
+           'time' => 'EXPLICIT',
+           'debug' => 0,
+           'asgms' => 'IMMEDIATE',
+           'version' => '.01.20181224',
+           'run' => 'BRUTEFORCE'},
+     'yarn' => [{
+            'a[0]' => 3,
+            'a[1]cy' => 'USD',
+            'a[0]cy' => 'EUR',
+            'a[1]' => 10,
+            'cy[USD]' => '1.2',
+            'cy[EUR]' => 1},
+           {
+            'a[1]' => 15,
+            'a_sum_eur' => 15,
+            'a[2]' => 30,
+            'a[2]cy' => 'EUR',
+            'a_sum[EUR]' => 3,
+            'a_sum[USD]' => 10},
+           {
+            'a_sum_eur' => 51,
+            'a_sum[EUR]' => 33,
+            'a_sum[USD]' => 15}
+          ]}
+;
+
+Good bye, Knitting Tycoon. Have a nice day!

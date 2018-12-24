@@ -1,3 +1,27 @@
+=begin comment
+
+COME_exe.pl - The executable of the COME-Perl-Prototype
+
+This prototype of the COME language is implemented very very poor; just to get the fist examples run. 
+The runtime performance is very very bad, but it is about to check, wether the idea could work out or not.
+The COME-language is interpreted as descriped in COME_paper.rtf.
+
+Install Perl v5.20 or newer and start the this programm beeing in the same folder and type the following code into the console:
+
+/#k1|<<s|a[*1*]>::
+  <<+|a_sum[<<0|a[*1*]cy>]> += <<0|a[*1*]> - <<-|a[*1*]>;
+  <<+|a_sum_eur>            += <<0|a[*1*]> * <<0|cy[<<0|a[*1*]cy>] - <<-|a[*1*]>> * <<-|cy[<<0|a[*1*]cy>]>
+#\
+<#cy[EUR]:=1;cy[USD]:=1.2#>
+<#a[0]cy:='EUR';a[0]:=3;a[1]cy:='USD';a[1]:=10;_tt+#>
+<#a[1]:=15;a[2]cy:='EUR';a[2]:=30;_tt+#>
+<#_html_dump:=come_a_curr_sum.html#>
+<#_exit#>
+
+, or just use examples/come_a_sum2.bat and if anythings works out: you should have created come_a_curr_sum.html.
+
+=cut
+
 use v5.20;
 use strict;
 use feature qw(signatures);
@@ -8,19 +32,6 @@ use lib '.';
 use come_plib::parser;
 use come_plib::base;
 use come_plib::io;
-
-=begin comment
-/#k1|<<s|a[*1*]>::
-  <<+|a_sum[<<0|a[*1*]cy>]> += <<0|a[*1*]> - <<-|a[*1*]>;
-  <<+|a_sum_eur>            += <<0|a[*1*]> * <<0|cy[<<0|a[*1*]cy>] - <<-|a[*1*]>> * <<-|cy[<<0|a[*1*]cy>]>
-#\
-<#cy[EUR]:=1;cy[USD]:=1.2;#>
-<#a[0]cy:='EUR';a[0]cy:='EUR';a[0]:=3;_tt+;_out0:=yarn#>
-<#_html_dump:=example\come_a_sum2.html#>
-=cut
-
-#print come_plib::io::DumpAll(\%come_plib::base::m);
-#$come_plib::base::m{debug}=1;
 
 come_plib::base::InitMesh();
 
@@ -43,37 +54,4 @@ while ($block) {
 }
 
 
-print "\nGood bye, Knitting Tycoon. Have a nice day!";
-
-#print "\n\nCKnitCode_k1(0, 0);\n";
-#come_plib::base::CKnitCode_k1(0, 0);
-
-#my $c_wild = \@{$come_plib::base::m{"cknit"}{"k1"}{"wild"}{"1"}};
-#my @yarn = keys %{$come_plib::base::m{"yarn*"}};
-#print "\n\n\n>>>COME_exe.pl>>>come_plib::parser::cyarnwild2regexp(\n".Data::Dumper::Dumper($c_wild);
-#my $regexp=come_plib::parser::cyarnwild2regexp($c_wild);
-#print "\n); := ".($regexp);
-#print "\n\n\n>>>COME_exe.pl>>>come_plib::parser::ryarn2cknitargs($regexp, \n".Data::Dumper::Dumper(\@yarn);
-#my @rargs=come_plib::parser::ryarn2cknitargs($regexp, \@yarn);
-#print "\n); := ".Data::Dumper::Dumper(\@rargs);
-
-#come_plib::base::KnitDebug();
-#my @a = come_plib::base::GetCKnitYarn("k1",".", 1);
-#foreach my $aa (@a) { print "\nGetCKnitYarn/aa = $$aa[0] / $$aa[1]"; }
-#my %a = come_plib::base::GetCKnitWild("k1",".");
-#print Data::Dumper::Dumper(\%a);
-
-
-#come_plib::base::SetCode("/#k1|<<s|a[*1*]>::<<+|a_sum> += <<0|a[*1*]> - <<-|a[*1*]>#\\");
-#come_plib::base::SetCode("<#a[0]:=3;a[1]:=9;a[2]:=6;_tt+#>");
-#come_plib::base::SetCode("<#a[1]:=3;a[3]:=10;_tt+#>");
-#come_plib::base::SetCode("<#_html_dump:=come_a_sum.html;_out0:=yarn;_out0:=code;_exit#>");
-#print come_plib::io::DumpAll(\%come_plib::base::m);
-#print Dumper($come_plib::base::m{"yarn"});
-#print come_plib::io::DumpCodeTxt(\%come_plib::base::m);
-#print come_plib::io::DumpYarnTxt(\%come_plib::base::m);
-
-#come_plib::io::DumpHTMLfile(\%come_plib::base::m, "come.html");#C:/Users/Lydia/Desktop/Daniel/COME/COME_Perl/come.html");
-#open(my $fh, '>', "C:/Users/Lydia/Desktop/Daniel/COME/COME_Perl/come.html") or die "cant open";
-#print $fh come_plib::io::DumpHTMLtab(come_plib::io::DumpYarnTxt(\%come_plib::base::m));
-#close $fh;
+print "\nGood bye, Knitting Tycoon. Have a X-Mas!";

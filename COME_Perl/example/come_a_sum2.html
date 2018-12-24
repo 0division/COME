@@ -4,7 +4,7 @@
 <tr><td bgcolor='white'><code></code></td><td><code><#cy[EUR]:=1;cy[USD]:=1.2#></td></tr>
 <tr><td bgcolor='white'><code></code></td><td><code><#a[0]cy:='EUR';a[0]:=3;a[1]cy:='USD';a[1]:=10;_tt+#></td></tr>
 <tr><td bgcolor='white'><code>1</code></td><td><code><#a[1]:=15;a[2]cy:='EUR';a[2]:=30;_tt+#></td></tr>
-<tr><td bgcolor='white'><code>2</code></td><td><code><#_html_dump:=example\come_a_sum2.html;_out0:=yarn;_out0:=dumpall#></td></tr>
+<tr><td bgcolor='white'><code>2</code></td><td><code><#_html_dump:=example\come_a_sum2.html;_out0:=yarn;_out0:=dump_all#></td></tr>
 <tr><td bgcolor='white'><code></table><br>
 <h4>Yarn</h4><table bgcolor='#222222'><tr><td><b>Name</b></code></td><td><code><b>*</b></code></td><td><code><b>tt=2</b></code></td><td><code><b>tt=1</b></code></td><td><code><b>tt=0</b></td></tr>
 <tr><td bgcolor='white'><code>                  a[0]</code></td><td><code>3</code></td><td><code></code></td><td><code></code></td><td><code>3</td></tr>
@@ -22,9 +22,9 @@
 <h4>Knit</h4>
 <table bgcolor='#222222'><tr><td><code>k1</code></td><td><code>/#k1|&lt;&lt;=|a[*1*]>::<br>  &lt;&lt;+|a_sum[&lt;&lt;0|a[*1*]cy>]> += &lt;&lt;0|a[*1*]> - &lt;&lt;-|a[*1*]>;<br>  &lt;&lt;+|a_sum_eur> += &lt;&lt;0|a[*1*]> * &lt;&lt;0|cy[&lt;&lt;0|a[*1*]cy>]> - &lt;&lt;-|a[*1*]> * &lt;&lt;-|cy[&lt;&lt;0|a[*1*]cy>]></code></td><td><code>
 sub CKnitCode_k1($tt, $a1) {<br>
- if (( GetYarn_Exact_TT($tt, "a[$a1]"))) {<br>
+ if (eval("".(GetYarn_Exact_TT($tt, "a[$a1]"))."")) {<br>
     AsgmYarn($tt+1, "a_sum[".GetYarn($tt, "a[$a1]cy")."]", "+=", " ".GetYarn($tt, "a[$a1]")." - ".GetYarn($tt-1, "a[$a1]")."");<br>
     AsgmYarn($tt+1, "a_sum_eur", "+=", " ".GetYarn($tt, "a[$a1]")." * ".GetYarn($tt, "cy[".GetYarn($tt, "a[$a1]cy")."]")." - ".GetYarn($tt-1, "a[$a1]")." * ".GetYarn($tt-1, "cy[".GetYarn($tt, "a[$a1]cy")."]")."");<br>
  }<br>
 }<br></code></td></tr></table><br>
-<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.19 21:31:47 / example\come_a_sum2.html </small></body></html>
+<small><br><br><br><b>COME</b> (Condition Mesh v.01, (c) 2018, Daniel Mueller) / 2018.12.24 11:33:19 / example\come_a_sum2.html </small></body></html>

@@ -5,7 +5,7 @@ cknit - compiled knit
  cwy  - compiled wild yarn 
  
  
-Todo: 1. parser::P2C macht eine Zeichenkettenzusammensetzung immer bei 0 und -, allerdings ist diese immer und nur bei verschachtelt zu un 
+Separator generated with http://www.patorjk.com/software/taag/#p=display&f=Mini&t=YARN
 =cut
 
 use v5.20;
@@ -22,7 +22,10 @@ package come_plib::base;
 our %m;
 #$m{debug} = 2;
 
-
+################################################################################################
+#### | \ |_ |_) | | /__  #######################################################################
+#### |_/ |_ |_) |_| \_|  #######################################################################
+################################################################################################
 sub Debug_Out($text, $newline=1, $delnewline=1, $deldouplespace=1, $delVAR=1) {
   #http://perldoc.perl.org/functions/caller.html
   my @c = caller(1);
@@ -41,19 +44,14 @@ sub Debug_Out($text, $newline=1, $delnewline=1, $deldouplespace=1, $delVAR=1) {
   }
 }
 ################################################################################################
-################################################################################################
-################################################################################################
-################################################################################################
+#### \_/ /\  |_) |\ |   ########################################################################
+####  | /--\ | \ | \|   ########################################################################
 ################################################################################################
 
-sub SetYarn($yarn, $op, $value) {
-  Debug_Out("($yarn, $op, $value) / m{tt}=$m{tt} ");
+sub SetYarn($yarn, $value) {
+  Debug_Out("($yarn, $value) / m{tt}=$m{tt} ");
   our %m;
-  if ($op eq ":=") {
-    Debug_Out(" executed!", 0);
-    $m{"yarn"}[$m{"tt"}]{$yarn} = $value; 
-    $m{"yarn*"}{$yarn} = $value; 
-  }
+  $m{"yarn*"}{$yarn} = $m{"yarn"}[$m{"tt"}]{$yarn} = $value; 
 }
 
 sub GetYarn_Exact_TT($tt, $yarn) {
@@ -89,11 +87,11 @@ sub AsgmYarn($tt, $yarn, $asgmOP, $value) {
 
 
 
-################################################################################################
-################################################################################################
-################################################################################################
-################################################################################################
-################################################################################################
+########################################################################################
+###  _          ___ ___ ################################################################
+### |_) |/ |\ |  |   |  ################################################################
+### |   |\ | \| _|_  |  ################################################################
+########################################################################################
 
 
 sub SetPKnitCode($knit, $code) {
@@ -109,9 +107,16 @@ sub SetPKnitAsgm($knit, $num, $asgm) {
   our %m;
   $m{"pknit"}{$knit}{"asgm"}[$num] = $asgm;
 }
+
+########################################################################################
+###  _         ___ ___  ################################################################
+### /  |/ |\ |  |   |   ################################################################
+### \_ |\ | \| _|_  |   ################################################################
+########################################################################################
+
 sub SetCKnitYarn($knit, $yarn, $ymod, $yocc) {
-  our %m;
-  $m{"Cyarn2knit"}{$yarn}{$knit} .= "<$yocc,$ymod>";    
+  our %m;    
+  if ($m{kfg}{run} ne "BRUTEFORCE") { $m{"Cyarn2knit"}{$yarn}{$knit} .= "<$yocc,$ymod>"; } 
   $m{"Cknit2yarn"}{$knit}{$yarn} .= "<$yocc,$ymod>";    
 }
 sub PCode2CLink($knit, $code, $occr) {
@@ -122,6 +127,8 @@ sub PCode2CLink($knit, $code, $occr) {
 
 sub SetCKnit($knit)  {
   our %m;
+  
+  # converting all the pcode into ccode (in this case perl code using subs in this library)
   my $Pcond  = $m{"pknit"}{$knit}{"cond"}[0];
   $m{"cknit"}{$knit}{"cond"}[0] = come_plib::parser::P2C($Pcond,0);
   PCode2CLink($knit, $Pcond, "c");
@@ -132,6 +139,7 @@ sub SetCKnit($knit)  {
     $m{"cknit"}{$knit}{"asgm"}[$i] = come_plib::parser::P2C($m{"pknit"}{$knit}{"asgm"}[$i] ,1);
   }
 
+  # creating the final perl-sub for this specific knit
   $m{"cknit"}{$knit}{"wild"}    = GetCKnitWild($knit, ".");
   my @args = keys %{$m{"cknit"}{$knit}{"wild"}};
   my $_code = "\nsub CKnitCode_$knit(\$tt, \$a".join(", \$a", @args).") {";
@@ -168,6 +176,10 @@ sub GetCKnitYarn($knit, $type, $withwild=0, $wild=1) {
   }
   @yarns;
 }
+
+# GetCKnitWild - Creates an array with wild card and corresponing regexp-yarn-names
+#  arg:knit:string - 
+#  arg:type:string - ".", "c" or "a" as type of yarn usage: c for condition, a for assignment and . for both 
 sub GetCKnitWild($knit, $type) {
   my @a = GetCKnitYarn($knit, $type, 1);
   my %w;
@@ -182,6 +194,11 @@ sub GetCKnitWild($knit, $type) {
 }
 
 
+########################################################################################
+###            ___        ##############################################################
+###  |\/|  /\   |  |\ |   ##############################################################
+###  |  | /--\ _|_ | \|   ##############################################################
+########################################################################################
 sub tick() {
   our %m;
   my $tt = $m{"tt"};
@@ -244,13 +261,13 @@ sub SetCode($code) {
 
   # next are assignments "<#y1?=v1;...;yN?=vN#>"
   if ($yS >= 0 and ($kS == -1 or $yS < $yE)) {	
-      $code =~ /<#([^#>]+)#>/;
-      my $asgms = $1;
-      if ($m{"debug"}) { print " / asgms = $asgms"; }
-      foreach my $asgm (split /;/, $asgms) {
+    $code =~ /<#([^#>]+)#>/;
+    my $asgms = $1;
+    if ($m{"debug"}) { print " / asgms = $asgms"; }
+    foreach my $asgm (split /;/, $asgms) {
       $asgm =~ s/^\s+|\s+$//g;
       Debug_Out("Asgm: (".$asgm.")");
-          $asgm =~ /([^:]*):=(.*)/;
+      $asgm =~ /([^:]*):=(.*)/;
       if (index($asgm, '_') == 0)  {
         if (index($asgm, '_tt+') == 0) { tick(); }
         elsif (index($asgm, '_out0') == 0) {
@@ -267,7 +284,7 @@ sub SetCode($code) {
       } else {
         $asgm =~ /([^:]*):=(.*)/;
         #print "\nSetYarn mit $asgm $1, $2";
-        SetYarn($1, ":=", eval($2));
+        SetYarn($1, eval($2));
       }
     }
     $code = substr($code, $yE);
@@ -279,12 +296,13 @@ sub SetCode($code) {
 
 sub InitMesh() {
   our %m;
-  $m{kfg}{version} = ".01.20181216";
+  $m{kfg}{version} = ".01.20181224";
   $m{kfg}{debug} = 0;
   $m{kfg}{time}  = "EXPLICIT";
-  $m{kfg}{asgms} = "IMMEDIATE";
-  print "/#\\ COME-Condition Mesh v$m{kfg}{version} | (c) 2018, Daniel Mueller | for help type <#_out0:=help#> |";
-  print " running in debug mode: NO DEBUG, time tick mode: $m{kfg}{time}, assignment mode: $m{kfg}{asgms}\n";
+  $m{kfg}{asgms} = "IMMEDIATE";  
+  $m{kfg}{run} = "BRUTEFORCE";  
+  print "/#\\ COME-Condition Mesh v$m{kfg}{version} | (c) 2018, Daniel Mueller | for help type <#_out0:=help#>";
+  print "\n running in debug mode: NO DEBUG, time tick mode: $m{kfg}{time}, assignment mode: $m{kfg}{asgms}, run-mode: $m{kfg}{run}\n";
   $m{"tt"} = 0;
 }
 
