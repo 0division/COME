@@ -1,6 +1,8 @@
 24.12.2018
   COME_pl::parser::P2C - <<0| and <<-| should now work also nested in a condition and <<=| should now work in an assigment: NOT TESTED!!!
   ALL - Adding comments
+29.12.2018:
+  COME_pl::base / tick(), setcode(), Asgm-Mode SPOOLING has been added
 
 NEXT:
   a) Adding even more comments
