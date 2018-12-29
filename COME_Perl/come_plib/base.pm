@@ -1,10 +1,14 @@
 ﻿=begin comment
 
+ 20181229 DM Implemented Asgm-Mode SPOOLING, even it makes no sence at all, in any case slower ;)
+
+
 pknit - knit pattern
 cknit - compiled knit
  cwy  - compiled wild yarn 
  
- 
+
+
 Separator generated with http://www.patorjk.com/software/taag/#p=display&f=Mini&t=YARN
 =cut
 
@@ -76,12 +80,24 @@ sub GetYarn($tt, $yarn) {
 
 sub AsgmYarn($tt, $yarn, $asgmOP, $value) {
   our %m;
-  my $v = GetYarn($tt, $yarn) ? GetYarn($tt, $yarn) : 0;
-  my $e = '$v '.$asgmOP.$value;
-  my $r = eval $e;
-  Debug_Out("($tt, $yarn, $asgmOP, $value) { :=($e):=$r; }");
-  $m{"yarn"}[$tt]{$yarn} = $v;
-  $m{"yarn*"}{$yarn} = $v;
+  Debug_Out("($tt, $yarn, $asgmOP, $value) / $m{kfg}{asgms}");
+  if ($m{kfg}{asgms} eq "IMMEDIATE") {
+    my $v = GetYarn($tt, $yarn); 
+    if (not $v) { $v = 0; }
+    my $e = '$v '.$asgmOP.$value;
+    my $r = eval $e;
+  	Debug_Out(" $e --> $r", 0);
+    $m{"yarn"}[$tt]{$yarn} = $v;
+    $m{"yarn*"}{$yarn} = $v;
+  } elsif ($m{kfg}{asgms} eq "SPOOLING") {
+  	if (not $m{"asgm"}[$tt]{$yarn}{$asgmOP}) {
+  		@{$m{"asgm"}[$tt]{$yarn}{$asgmOP}} = eval $value; 
+  	} else {
+  		push @{$m{"asgm"}[$tt]{$yarn}{$asgmOP}}, eval $value
+  	}  	
+  } else {
+  	die "unknown Asgm-Mode $m{kfg}{asgms}, it is only IMMEDIATE allowed";
+  }
 }
 
 
@@ -228,7 +244,44 @@ sub tick() {
       Debug_Out(Data::Dumper::Dumper(\$@));
     }
   }
-  $m{"tt"}++;
+  
+
+  
+  $m{"tt"}++; 
+  
+  # do the asgm-SPOOLING if switched on
+  if ($m{kfg}{asgms} eq "SPOOLING") {
+    $tt = $m{"tt"};
+   	my @yarns = keys %{$m{"asgm"}[$tt]};
+  	foreach my $y (@yarns) {
+  		my @ops = keys %{$m{"asgm"}[$tt]{$y}};
+  		my ($op_plus, $op_minus, $op_mul, $op_div, $op_set) = (0, 0, 0, 0, 0);
+  		foreach my $op (@ops) {
+  			if ($op eq "+=") { $op_plus  = 1; }
+  			if ($op eq "-=") { $op_minus = 1; }
+  			if ($op eq "*=") { $op_mul   = 1; }
+  			if ($op eq "/=") { $op_div   = 1; }
+  			if ($op eq ":=") { $op_set   = 1; }
+  	  }
+  	  if ($op_set == 1) {
+  	  	die "Assignment Operator := is NOT IMPLEMENTED YET in SPOOLING-Mode";
+  	  } else {
+  	  	my $v2 = GetYarn($tt, $y); 
+  	  	if (not $v2) { $v2 = 0; }
+  	    my $asgm_str = "";
+  	  	if ($op_mul)   { $asgm_str .= "*".join ("*", @{$m{"asgm"}[$tt]{$y}{"*="}});  }
+  			if ($op_div)   { $asgm_str .= "/(".join("*", @{$m{"asgm"}[$tt]{$y}{"/="}}).")"; }
+   			if ($op_plus)  { $asgm_str .= "+".join ("+", @{$m{"asgm"}[$tt]{$y}{"+="}});  }
+  			if ($op_minus) { $asgm_str .= "-".join ("+", @{$m{"asgm"}[$tt]{$y}{"-="}});  }
+  	    Debug_Out("Asgm ".'$v2 = $v2 '.$asgm_str.";";
+  			my $r = eval '$v2 = $v2 '.$asgm_str;
+        $m{"yarn"}[$tt]{$y} = $v2;
+        $m{"yarn*"}{$y} = $v2;
+  	  }
+  		print "\n\nSPOOLinG-asgm-ops:". Data::Dumper::Dumper(\@ops);
+    }
+  	print "\n\nSPOOLinG:". Data::Dumper::Dumper($m{"asgm"});
+  }
 }
 
 sub SetCode($code) {
@@ -277,6 +330,11 @@ sub SetCode($code) {
           if ($2 =~ /help(\d*)/)     { come_plib::help::help($1); }		
         }
         elsif (index($asgm, '_exit') == 0) { exit; }
+        elsif (index($asgm, '_mode') == 0) {
+        	if ($asgm eq "asgm_mode" and ($2 eq "IMMEDIATE" or $2 eq "SPOOLING")) {
+        		$m{kfg}{asgms} = $2;
+        	}
+        }
         elsif (index($asgm, '_html_dump') == 0) { 
           come_plib::io::DumpHTMLfile(\%come_plib::base::m, $2);
         }

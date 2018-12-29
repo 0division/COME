@@ -1,0 +1,72 @@
+/#\ COME-Condition Mesh v.01.20181224 | (c) 2018, Daniel Mueller | for help type <#_out0:=help#>
+ running in debug mode: NO DEBUG, time tick mode: EXPLICIT, assignment mode: SPOOLING, run-mode: BRUTEFORCE
+
+Asgm $v2 = $v2 +3+6+9;
+
+SPOOLinG-asgm-ops:$VAR1 = [
+          '+='
+        ];
+
+
+SPOOLinG:$VAR1 = [
+          undef,
+          {
+            'a_sum' => {
+                         '+=' => [
+                                   3,
+                                   6,
+                                   9
+                                 ]
+                       }
+          }
+        ];
+
+..................Name	*	tt=1	tt=0
+                  a[0]	3		3
+                  a[1]	9		9
+                  a[2]	6		6
+                 a_sum	18	18	
+
+Asgm $v2 = $v2 +-6+10;
+
+SPOOLinG-asgm-ops:$VAR1 = [
+          '+='
+        ];
+
+
+SPOOLinG:$VAR1 = [
+          undef,
+          {
+            'a_sum' => {
+                         '+=' => [
+                                   3,
+                                   6,
+                                   9
+                                 ]
+                       }
+          },
+          {
+            'a_sum' => {
+                         '+=' => [
+                                   -6,
+                                   10
+                                 ]
+                       }
+          }
+        ];
+
+..................Name	*	tt=2	tt=1	tt=0
+                  a[0]	3			3
+                  a[1]	3		3	9
+                  a[2]	6			6
+                  a[3]	10		10	
+                 a_sum	22	22	18	
+
+tt	code
+0	/#k1|<<=|a[*1*]>::<<+|a_sum> += <<0|a[*1*]> - <<-|a[*1*]>#\
+	<#a[0]:=3;a[1]:=9;a[2]:=6;_tt+#>
+1	<#_out0:=yarn#>
+	<#a[1]:=3;a[3]:=10;_tt+#>
+2	<#_html_dump:=example\come_a_sum.html;_out0:=yarn;_out0:=code;_out0:=dumpall#>
+
+Good bye, Knitting Tycoon. Have a X-Mas!
